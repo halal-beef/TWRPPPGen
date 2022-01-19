@@ -16,15 +16,19 @@
                 if (args[i].ToLower().Contains("--recovery_image"))
                 {
                     recoveryImg = true;
+                    break;
                 } 
                 else if (args[i].ToLower().Contains("--boot_image"))
                 {
                     bootImg = true;
+                    break;
                 }
             }
-            if (recoveryImg)
+            
+            //Both parameters were false...
+            if(!recoveryImg && !bootImg)
             {
-
+                AnsiConsole.MarkupLine("[maroon]\tYou didn't indicate a recovery image or boot image to work with![/]");
             }
         }
     }
