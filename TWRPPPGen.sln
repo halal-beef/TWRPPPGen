@@ -3,12 +3,24 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C6B3AA59-DB1C-4BAA-AAD8-449CCDD3E84E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TWRPPPGen", "TWRPPPGen\TWRPPPGen.csproj", "{9D5672BA-BC35-4E1C-8278-B69FBE2C5E1C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4A49D869-72D1-4535-9E38-0997F927B2B8}"
 	ProjectSection(SolutionItems) = preProject
-		TWRPPPGen\TWRPPPGen.csproj = TWRPPPGen\TWRPPPGen.csproj
+		readme.md = readme.md
 	EndProjectSection
 EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9D5672BA-BC35-4E1C-8278-B69FBE2C5E1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D5672BA-BC35-4E1C-8278-B69FBE2C5E1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D5672BA-BC35-4E1C-8278-B69FBE2C5E1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D5672BA-BC35-4E1C-8278-B69FBE2C5E1C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
