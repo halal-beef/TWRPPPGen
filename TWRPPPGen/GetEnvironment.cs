@@ -3,6 +3,21 @@
     internal class GetEnvironment
     {
         /// <summary>
+        /// Verifies if the OS is Windows or Linux.
+        /// </summary>
+        /// <returns>True if the OS is windows. False if it is other.</returns>
+        public static bool VerifyOS()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return true;
+            } 
+            else
+            {
+                return false;
+            }
+        }
+        /// <summary>
         /// Checks if AIK is available on a directory.
         /// </summary>
         public static void VerifyAIK()
