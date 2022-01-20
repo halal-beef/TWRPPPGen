@@ -38,27 +38,47 @@
             //lets do some trolling
             if(Data.CurrentOS.Equals(OSPlatform.Windows) && !GetEnvironment.VerifyAIK())
             {
-                HttpResponseMessage hrm = Data.client.GetAsync("").GetAwaiter().GetResult();
-
-                if (hrm.IsSuccessStatusCode)
+                bool internet = true;
+                AnsiConsole.Status()
+                    .Spinner(Spinner.Known.Ascii)
+                    .Start("Downloading AIK", 
+                ctx =>
                 {
-                    string zipTemp = Path.GetTempFileName();
-                    Stream aikZip = hrm.Content.ReadAsStream();
+                    HttpResponseMessage hrm = Data.client.GetAsync("").GetAwaiter().GetResult();
 
-                    using (FileStream fs = File.Create(zipTemp))
+                    if (hrm.IsSuccessStatusCode)
                     {
-                        //Easy way Maeks AikZip Stream Content -> File
-                        aikZip.CopyTo(fs);
-                        fs.Flush();
-                        ZipFile.ExtractToDirectory(zipTemp, Data.PathToAIK);
-                        fs.Dispose();
-                        fs.Close();
+                        string zipTemp = Path.GetTempFileName();
+                        Stream aikZip = hrm.Content.ReadAsStream();
+
+                        using (FileStream fs = File.Create(zipTemp))
+                        {
+                            //Easy way Maeks AikZip Stream Content -> File
+                            aikZip.CopyTo(fs);
+                            fs.Flush();
+                            ZipFile.ExtractToDirectory(zipTemp, Data.PathToAIK);
+                            ctx.Status("Unpacking AIK");
+                            fs.Dispose();
+                            fs.Close();
+                        }
+                        ctx.Status("Deleting temporary files");
+                        File.Delete(zipTemp);
                     }
-                    File.Delete(zipTemp);
-                } 
-                else
+                    else
+                    {
+                        internet = false;
+                    }
+
+                });
+                if (!internet)
                 {
-                    AnsiConsole.MarkupLine($"[maroon]\t- There isn't an internet connection available! \n\t- If you have an AIK zip with all it's dependencies and it's scripts, unzip it into {Data.PathToAIK}[/]");
+                    AnsiConsole.MarkupLine(
+                            "[maroon]" +
+                            "\t- There isn't an internet connection available!\n" +
+                           $"\t- If you have an AIK zip with all it's dependencies and it's scripts, unzip it into \"{Data.PathToAIK}\" ..." +
+                            "[/]");
+
+                    Thread.Sleep(5 * 1000);
                     Environment.Exit(0);
                 }
             }
