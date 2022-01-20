@@ -36,7 +36,6 @@
             }
             Data.CurrentOS = GetEnvironment.VerifyOS();
             
-            //lets do some trolling
             if(Data.CurrentOS.Equals(OSPlatform.Windows) && !GetEnvironment.VerifyAIK())
             {
                 bool internet = true;
@@ -93,10 +92,11 @@
                     Environment.Exit(0);
                 }
             }
-            else
-            {
-                
-            }
+
+            if(GetEnvironment.VerifyAIK())
+               ProcessInvoker.InvokeCMD(Data.PathToAIK + @"\unpackimg.bat", imageLocation.ToString(), false);
+            
+            //Unpack Image.
         }
     }
 }
