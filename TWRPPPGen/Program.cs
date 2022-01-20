@@ -72,6 +72,7 @@
                         ZipFile.ExtractToDirectory(zipTemp, Environment.CurrentDirectory);
                         ctx.Status("Deleting temporary files");
                         File.Delete(zipTemp);
+                        ctx.Status("Starting [lime]AIK[/]");
                     }
                     else
                     {
