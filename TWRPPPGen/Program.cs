@@ -29,10 +29,10 @@
             }
 
             //Both parameters were false...
-            if(!recoveryImg && !bootImg || imageLocation.ToString() == "")
+            /*if(!recoveryImg && !bootImg || imageLocation.ToString() == "")
             {
                 AnsiConsole.MarkupLine("[maroon]\t- You didn't indicate a recovery image or boot image to work with![/]");
-            }
+            }*/
             Data.CurrentOS = GetEnvironment.VerifyOS();
             
             //lets do some trolling
@@ -41,12 +41,21 @@
                 bool internet = true;
                 AnsiConsole.Status()
                     .Spinner(Spinner.Known.Ascii)
-                    .Start("Downloading AIK", 
+                    .Start("Downloading [red]AIK[/]", 
                 ctx =>
                 {
-                    HttpResponseMessage hrm = Data.client.GetAsync("").GetAwaiter().GetResult();
+                    bool ded = false;
+                    HttpResponseMessage hrm = new();
+                    try
+                    {
+                        hrm = Data.client.GetAsync("https://forum.xda-developers.com/attachments/android-image-kitchen-v3-8-win32-zip.5300919/").GetAwaiter().GetResult();
+                    }
+                    catch
+                    {
+                        ded=true;
+                    }
 
-                    if (hrm.IsSuccessStatusCode)
+                    if (!ded && hrm.IsSuccessStatusCode)
                     {
                         string zipTemp = Path.GetTempFileName();
                         Stream aikZip = hrm.Content.ReadAsStream();
@@ -56,11 +65,12 @@
                             //Easy way Maeks AikZip Stream Content -> File
                             aikZip.CopyTo(fs);
                             fs.Flush();
-                            ZipFile.ExtractToDirectory(zipTemp, Data.PathToAIK);
-                            ctx.Status("Unpacking AIK");
                             fs.Dispose();
                             fs.Close();
                         }
+                        Directory.CreateDirectory(Data.PathToAIK);
+                        ctx.Status("Unpacking [red]AIK[/]");
+                        ZipFile.ExtractToDirectory(zipTemp, Data.PathToAIK);
                         ctx.Status("Deleting temporary files");
                         File.Delete(zipTemp);
                     }
@@ -70,12 +80,13 @@
                     }
 
                 });
+
                 if (!internet)
                 {
                     AnsiConsole.MarkupLine(
                             "[maroon]" +
                             "\t- There isn't an internet connection available!\n" +
-                           $"\t- If you have an AIK zip with all it's dependencies and it's scripts, unzip it into \"{Data.PathToAIK}\" ..." +
+                           $"\t- If you have an AIK zip with all it's dependencies and it's scripts, unzip it into \"{Data.PathToAIK}\"" +
                             "[/]");
 
                     Thread.Sleep(5 * 1000);
