@@ -36,7 +36,7 @@
             Data.CurrentOS = GetEnvironment.VerifyOS();
             
             //lets do some trolling
-            if(Data.CurrentOS.Equals(OSPlatform.Windows))
+            if(Data.CurrentOS.Equals(OSPlatform.Windows) && !GetEnvironment.VerifyAIK())
             {
                 HttpResponseMessage hrm = Data.client.GetAsync("").GetAwaiter().GetResult();
 
@@ -58,7 +58,8 @@
                 } 
                 else
                 {
-                    AnsiConsole.MarkupLine("[maroon]\t- There isn't an internet connection available![/]");
+                    AnsiConsole.MarkupLine($"[maroon]\t- There isn't an internet connection available! \n\t- If you have an AIK zip with all it's dependencies and it's scripts, unzip it into {Data.PathToAIK}[/]");
+                    Environment.Exit(0);
                 }
             }
             else

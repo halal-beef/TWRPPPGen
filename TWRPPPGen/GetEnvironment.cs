@@ -28,20 +28,21 @@
         /// <summary>
         /// Checks if AIK is available on a directory.
         /// </summary>
-        public static void VerifyAIK()
+        /// <returns>True if AIK Folder, unpackimg.bat and repackimg.bat are present, else false.</returns>
+        public static bool VerifyAIK()
         {
-            
             if (!Directory.Exists(Data.PathToAIK))
             {
-                throw new Exception("No AIK Folder.");
-            } 
+                return false;
+            }
             else if (Directory.Exists(Data.PathToAIK))
             {
-                if (File.Exists(Environment.CurrentDirectory + @"/AIK/unpackimg.bat") && File.Exists(Environment.CurrentDirectory + @"/AIK/repackimg.bat"))
+                if (File.Exists(Data.PathToAIK + @"\unpackimg.bat") && File.Exists(Data.PathToAIK + @"\repackimg.bat"))
                 {
-
+                    return true;
                 }
             }
+            return false;
         }
     }
 }
