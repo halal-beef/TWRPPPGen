@@ -68,9 +68,8 @@
                             fs.Dispose();
                             fs.Close();
                         }
-                        Directory.CreateDirectory(Data.PathToAIK);
                         ctx.Status("Unpacking [red]AIK[/]");
-                        ZipFile.ExtractToDirectory(zipTemp, Data.PathToAIK);
+                        ZipFile.ExtractToDirectory(zipTemp, Environment.CurrentDirectory);
                         ctx.Status("Deleting temporary files");
                         File.Delete(zipTemp);
                     }

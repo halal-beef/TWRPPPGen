@@ -24,6 +24,6 @@
         /// The HttpClient used to perform Http requests.
         /// </summary>
         public static HttpClient client = new();
-        public static readonly string PathToAIK = Environment.CurrentDirectory + @"\AIK\";
+        public static readonly string PathToAIK = Environment.CurrentDirectory + @"\Android Image Kitchen\";
     }
 }
