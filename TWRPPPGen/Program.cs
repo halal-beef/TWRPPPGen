@@ -9,7 +9,7 @@
         public static void Main(string[] args)
         {
             StringBuilder imageLocation = new();
-            bool recoveryImg = false, 
+            bool recoveryImg = false,
                  bootImg = false;
             //Parse args.
             for (int i = 0; i < args.Length; i++)
@@ -19,7 +19,7 @@
                     imageLocation.Append(args[i + 1]);
                     recoveryImg = true;
                     break;
-                } 
+                }
                 else if (args[i].ToLower().Contains("--boot_image"))
                 {
                     imageLocation.Append(args[i + 1]);
@@ -29,19 +29,20 @@
             }
 
             //Both parameters were false...
-            if(!recoveryImg && !bootImg || imageLocation.ToString() == "")
+            if (!recoveryImg && !bootImg || imageLocation.ToString() == "")
             {
                 AnsiConsole.MarkupLine("[maroon]\t- You didn't indicate a recovery image or boot image to work with![/]");
                 Environment.Exit(-1);
             }
+
             Data.CurrentOS = GetEnvironment.VerifyOS();
-            
-            if(Data.CurrentOS.Equals(OSPlatform.Windows) && !GetEnvironment.VerifyAIK())
+
+            if (Data.CurrentOS.Equals(OSPlatform.Windows) && !GetEnvironment.VerifyAIK())
             {
                 bool internet = true;
                 AnsiConsole.Status()
                     .Spinner(Spinner.Known.Ascii)
-                    .Start("Downloading [red]AIK[/]", 
+                    .Start("Downloading [red]AIK[/]",
                 ctx =>
                 {
                     bool ded = false;
@@ -52,7 +53,7 @@
                     }
                     catch
                     {
-                        ded=true;
+                        ded = true;
                     }
 
                     if (!ded && hrm.IsSuccessStatusCode)
@@ -94,10 +95,49 @@
                 }
             }
 
-            if(GetEnvironment.VerifyAIK())
-               ProcessInvoker.InvokeCMD(Data.PathToAIK + @"\unpackimg.bat", imageLocation.ToString(), false);
-            
-            //Unpack Image.
+            try
+            {
+                File.Copy(imageLocation.ToString(), Data.PathToAIK + @"\recovery.img", true);
+            }
+            catch
+            {
+                AnsiConsole.MarkupLine("[maroon]\t- The supplied path to the image is invalid![/]");
+            }
+
+            //Unpack Image to AIK folder.
+            if (GetEnvironment.VerifyAIK())
+                ProcessInvoker.InvokeCMD(Data.PathToAIK + @"\unpackimg.bat", "recovery.img", true, true);
+
+            List<string> vals = new();
+            bool foundProp = true;
+            AnsiConsole.Status()
+                    .Spinner(Spinner.Known.Ascii)
+                    .Start("Reading files",
+                ctx =>
+                {
+                    ctx.Status($"Parsing props...");
+                    //Get prop.default/default.prop and parse it
+                    if (File.Exists(Data.PathToAIK + @"\ramdisk\prop.default"))
+                    {
+                        vals = PropParser.ParseFile(Data.PathToAIK + @"\ramdisk\prop.default");
+                    }
+                    else if (File.Exists(Data.PathToAIK + @"\ramdisk\default.prop"))
+                    {
+                        vals = PropParser.ParseFile(Data.PathToAIK + @"\ramdisk\default.prop");
+                    }
+                    else
+                    {
+                        foundProp = false;
+                    }
+                });
+            if (foundProp)
+            {
+                AnsiConsole.MarkupLine(
+                    "[maroon]\t- Was the image supplied a A Only device boot image?" +
+                    "\t- If so, try fetching the recovery.img for your device");
+                Thread.Sleep(5 * 1000);
+                Environment.Exit(0);
+            }
         }
     }
 }
