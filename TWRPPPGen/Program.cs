@@ -34,6 +34,17 @@
                 AnsiConsole.MarkupLine("[maroon]\tYou didn't indicate a recovery image or boot image to work with![/]");
             }
             Data.IsOSWindows = GetEnvironment.VerifyOS();
+            
+            //lets do some trolling
+            if(Data.IsOSWindows == true)
+            {
+                //new System.Net.WebClient().DownloadFile("https://github.com/osm0sis/Android-Image-Kitchen/archive/refs/heads/master.zip","AIK.zip");
+                
+            }
+            else
+            {
+                
+            }
         }
     }
 }
