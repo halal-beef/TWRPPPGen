@@ -29,10 +29,11 @@
             }
 
             //Both parameters were false...
-            /*if(!recoveryImg && !bootImg || imageLocation.ToString() == "")
+            if(!recoveryImg && !bootImg || imageLocation.ToString() == "")
             {
                 AnsiConsole.MarkupLine("[maroon]\t- You didn't indicate a recovery image or boot image to work with![/]");
-            }*/
+                Environment.Exit(-1);
+            }
             Data.CurrentOS = GetEnvironment.VerifyOS();
             
             //lets do some trolling
