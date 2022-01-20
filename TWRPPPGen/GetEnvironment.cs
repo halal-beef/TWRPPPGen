@@ -12,7 +12,7 @@
             {
                 return true;
             } 
-            else
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 return false;
             }
