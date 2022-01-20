@@ -31,15 +31,35 @@
             //Both parameters were false...
             if(!recoveryImg && !bootImg || imageLocation.ToString() == "")
             {
-                AnsiConsole.MarkupLine("[maroon]\tYou didn't indicate a recovery image or boot image to work with![/]");
+                AnsiConsole.MarkupLine("[maroon]\t- You didn't indicate a recovery image or boot image to work with![/]");
             }
-            Data.IsOSWindows = GetEnvironment.VerifyOS();
+            Data.CurrentOS = GetEnvironment.VerifyOS();
             
             //lets do some trolling
-            if(Data.IsOSWindows == true)
+            if(Data.CurrentOS.Equals(OSPlatform.Windows))
             {
-                //new System.Net.WebClient().DownloadFile("https://github.com/osm0sis/Android-Image-Kitchen/archive/refs/heads/master.zip","AIK.zip");
-                
+                HttpResponseMessage hrm = Data.client.GetAsync("").GetAwaiter().GetResult();
+
+                if (hrm.IsSuccessStatusCode)
+                {
+                    string zipTemp = Path.GetTempFileName();
+                    Stream aikZip = hrm.Content.ReadAsStream();
+
+                    using (FileStream fs = File.Create(zipTemp))
+                    {
+                        //Easy way Maeks AikZip Stream Content -> File
+                        aikZip.CopyTo(fs);
+                        fs.Flush();
+                        ZipFile.ExtractToDirectory(zipTemp, Data.PathToAIK);
+                        fs.Dispose();
+                        fs.Close();
+                    }
+                    File.Delete(zipTemp);
+                } 
+                else
+                {
+                    AnsiConsole.MarkupLine("[maroon]\t- There isn't an internet connection available![/]");
+                }
             }
             else
             {

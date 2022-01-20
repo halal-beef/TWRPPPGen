@@ -5,16 +5,24 @@
         /// <summary>
         /// Verifies if the OS is Windows or Linux.
         /// </summary>
-        /// <returns>True if the OS is windows. False if it is other.</returns>
-        public static bool VerifyOS()
+        /// <returns>OSPlatform struct containing OS type.</returns>
+        public static OSPlatform VerifyOS()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                return true;
+                return OSPlatform.Windows;
             } 
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                return false;
+                return OSPlatform.Linux;
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return OSPlatform.OSX;
+            } 
+            else
+            {
+                return OSPlatform.FreeBSD;
             }
         }
         /// <summary>
@@ -22,15 +30,14 @@
         /// </summary>
         public static void VerifyAIK()
         {
-            string currentDir = Environment.CurrentDirectory;
             
-            if (!Directory.Exists(currentDir + @"/AIK/"))
+            if (!Directory.Exists(Data.PathToAIK))
             {
                 throw new Exception("No AIK Folder.");
             } 
-            else if (Directory.Exists(currentDir + @"/AIK/"))
+            else if (Directory.Exists(Data.PathToAIK))
             {
-                if (File.Exists(currentDir + @"/AIK/unpackimg.bat") && File.Exists(currentDir + @"/AIK/repackimg.bat"))
+                if (File.Exists(Environment.CurrentDirectory + @"/AIK/unpackimg.bat") && File.Exists(Environment.CurrentDirectory + @"/AIK/repackimg.bat"))
                 {
 
                 }
