@@ -1,9 +1,11 @@
 # Github workflows
 # Made by SmallPP420
-# the size of this program is gonna be huge xd
-dotnet publish "/home/runner/work/TWRPPPGen/TWRPPPGen/TWRPPPGen/TWRPPPGen.csproj" --output "build\\" --arch x64 --os win -c release --self-contained true # win build
+# the size of this program is gonna be huge xd (Yes it is.)
 
-dotnet publish "/home/runner/work/TWRPPPGen/TWRPPPGen/TWRPPPGen/TWRPPPGen.csproj" --output "build-debug\\" --arch x64 --os win -c debug --self-contained true # win build
+# Build Debug & Release
+dotnet publish "/home/runner/work/TWRPPPGen/TWRPPPGen/TWRPPPGen/TWRPPPGen.csproj" --output "build\\" -r win-x64 -c release # win build
+
+dotnet publish "/home/runner/work/TWRPPPGen/TWRPPPGen/TWRPPPGen/TWRPPPGen.csproj" --output "build-debug\\" -r win-x64 -c debug # win build
 
 # Move debug build
 mv "/home/runner/work/TWRPPPGen/TWRPPPGen/build-debug/TWRPPPGen.exe" "/home/runner/work/TWRPPPGen/TWRPPPGen/build/DEBUG-TWRPPPGen.exe"
