@@ -99,6 +99,20 @@
             }
             #endregion
 
+            #region Get Templates(WIP).
+
+            if (Directory.Exists(Environment.CurrentDirectory + @"\Templates\"))
+            {
+                bool androidMK = File.Exists(Environment.CurrentDirectory + @"\Templates\Android.mk"),
+                     androidProductsMK = File.Exists(Environment.CurrentDirectory + @"\Templates\AndroidProducts.mk"),
+                     boardConfigMK = File.Exists(Environment.CurrentDirectory + @"\Templates\BoardConfig.mk");
+                if(androidMK && androidProductsMK && boardConfigMK)
+                {
+                    AnsiConsole.MarkupLine("[green]\t- Templates detected![/]");
+                }
+            }
+            #endregion
+
             #region Setup AIK and Run AIK
             try
             {
@@ -164,7 +178,7 @@
             //||  MODEL TREE:  ||
             //||---------------||
 
-            /*	{device}
+            /*	device
              *	 |_  {brand}
              *	   |_ {codename}
              *	       |  omni_{codename}.mk
@@ -216,7 +230,7 @@
                 {
                     Thread.Sleep(500);
                 }
-
+                ctx.Status("Creating Folders");
                 string treeGenFolder = Environment.CurrentDirectory + @"\Generated-Tree\";
 
                 //Make folders to contain the tree!
@@ -227,6 +241,12 @@
                 Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\prebuilt\");
                 Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\recovery\");
                 Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\recovery\root");
+
+                ctx.Status("Copying Files");
+
+                MakeFile.CopyFiles(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\recovery\root\");
+
+                ctx.Status("Creating Files");
             });
             #endregion
         }
