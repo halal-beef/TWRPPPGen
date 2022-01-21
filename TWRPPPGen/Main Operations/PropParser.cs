@@ -4,7 +4,7 @@
     {
         public static Object LineSearcherlocker = new();
         /// <summary>
-        /// Searches a property in the list.
+        /// Searches a property in the list and returns it's value.
         /// </summary>
         /// <param name="targetLine">Property that is needed</param>
         /// <param name="PropLines">The list containing the property list.</param>

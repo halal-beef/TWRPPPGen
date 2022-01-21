@@ -196,7 +196,8 @@
             {
                 "ro.product.odm.model",
                 "ro.product.odm.brand",
-                "ro.product.odm.device"
+                "ro.product.odm.device",
+                "ro.board.platform"
             };
             List<string> propValue = new();
             //Set the propValue capacity to be the needed props one.
