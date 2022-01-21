@@ -5,7 +5,7 @@
         /// <summary>
         /// Copy needed files to ./device/{brand}/{codename}/recovery/root/
         /// </summary>
-        public static void CopyFiles(string targetFolder)
+        public static void CopyFiles(string targetFolder, string hware)
         {
             //List all .rc files in the extracted Ramdisk root folder.
             string[] dotRCFiles = Directory.GetFiles(Data.PathToAIK + @"\ramdisk\", "*.rc");
@@ -15,24 +15,38 @@
                 string[] part2 = dotRCFiles[i].Split('\\');
 
                 //Copy the file if it maches.
-                if (part2.Last().Contains("init.recovery.qcom")
-                 || part2.Last().Contains("init.recovery.mt")
-                 || part2.Last().Contains("ueventd.qcom.rc")
-                 || part2.Last().Contains("ueventd.mt"))
+                if (part2.Last().Contains($"init.recovery.{hware}")
+                 || part2.Last().Contains($"init.recovery.{hware}")
+                 || part2.Last().Contains($"ueventd.{hware}")
+                 || part2.Last().Contains($"ueventd.{hware}"))
                 {
                     File.Copy(dotRCFiles[i], targetFolder + part2.Last(), true);
                 }
             }
 
-            if (Directory.Exists(Data.PathToAIK + @"\ramdisk\system\etc"))
+            if (Directory.Exists(Data.PathToAIK + @"\ramdisk\system\"))
             {
-                if (File.Exists(Data.PathToAIK + @"\ramdisk\system\etc\ueventd.rc"))
+                if (Directory.Exists(Data.PathToAIK + @"\ramdisk\system\etc"))
                 {
-                    File.Copy(Data.PathToAIK + @"\ramdisk\system\etc\ueventd.rc", targetFolder + "\\ueventd.rc", true);
+                    if (File.Exists(Data.PathToAIK + @"\ramdisk\system\etc\ueventd.rc"))
+                    {
+                        File.Copy(Data.PathToAIK + @"\ramdisk\system\etc\ueventd.rc", targetFolder + "\\ueventd.rc", true);
+                    }
+                    if (File.Exists(Data.PathToAIK + @"\ramdisk\system\etc\recovery.fstab"))
+                    {
+                        File.Copy(Data.PathToAIK + @"\ramdisk\system\etc\recovery.fstab", targetFolder + "\\etc\\recovery.fstab", true);
+                    }
                 }
-                if (File.Exists(Data.PathToAIK + @"\ramdisk\system\etc\recovery.fstab"))
+            } 
+            else if (Directory.Exists(Data.PathToAIK + @"\ramdisk\etc\"))
+            {
+                if (File.Exists(Data.PathToAIK + @"\ramdisk\ueventd.rc"))
                 {
-                    File.Copy(Data.PathToAIK + @"\ramdisk\system\etc\recovery.fstab", targetFolder + "\\etc\\recovery.fstab", true);
+                    File.Copy(Data.PathToAIK + @"\ramdisk\ueventd.rc", targetFolder + "\\ueventd.rc", true);
+                }
+                if (File.Exists(Data.PathToAIK + @"\ramdisk\etc\recovery.fstab"))
+                {
+                    File.Copy(Data.PathToAIK + @"\ramdisk\etc\recovery.fstab", targetFolder + "\\etc\\recovery.fstab", true);
                 }
             }
         }

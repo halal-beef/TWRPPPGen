@@ -116,13 +116,18 @@
             #region Setup AIK and Run AIK
             try
             {
-                if (recoveryImg) 
+                if (GetEnvironment.VerifyAIK())
                 {
-                    File.Copy(imageLocation.ToString(), Data.PathToAIK + @"\recovery.img", true);
-                } 
-                else if (bootImg)
-                {
-                    File.Copy(imageLocation.ToString(), Data.PathToAIK + @"\boot.img", true);
+                    if (recoveryImg)
+                    {
+                        File.Copy(imageLocation.ToString(), Data.PathToAIK + @"\recovery.img", true);
+                        ProcessInvoker.InvokeCMD(Data.PathToAIK + @"\unpackimg.bat", "recovery.img", true, true);
+                    }
+                    else if (bootImg)
+                    {
+                        File.Copy(imageLocation.ToString(), Data.PathToAIK + @"\boot.img", true);
+                        ProcessInvoker.InvokeCMD(Data.PathToAIK + @"\unpackimg.bat", "boot.img", true, true);
+                    }
                 }
             }
 
@@ -131,10 +136,6 @@
                 AnsiConsole.MarkupLine("[maroon]\t- The supplied path to the image is invalid![/]");
             }
 
-            //Unpack Image to AIK folder.
-
-            if (GetEnvironment.VerifyAIK())
-                ProcessInvoker.InvokeCMD(Data.PathToAIK + @"\unpackimg.bat", "recovery.img", true, true);
             #endregion
 
             #region Parse Prop File.
@@ -194,9 +195,9 @@
              */
             List<string> neededProps = new() 
             {
-                "ro.product.odm.model",
-                "ro.product.odm.brand",
-                "ro.product.odm.device",
+                "ro.product.vendor.model",
+                "ro.product.vendor.brand",
+                "ro.product.vendor.device",
                 "ro.board.platform"
             };
             List<string> propValue = new();
@@ -244,9 +245,18 @@
                 Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\recovery\root\");
                 Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\recovery\root\etc\");
 
+                if (!propValue[3].Contains("mt"))
+                {
+                    if(PropParser.LineSearcher("ro.hardware.wlan.vendor", props) == "qcom")
+                    {
+                        propValue[3] = "qcom";
+                    }
+                }
+
+
                 ctx.Status("Copying Files");
 
-                MakeFile.CopyFiles(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\recovery\root\");
+                MakeFile.CopyFiles(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\recovery\root\", propValue[3]);
 
                 ctx.Status("Creating Files");
             });
