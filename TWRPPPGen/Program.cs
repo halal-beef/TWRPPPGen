@@ -243,7 +243,16 @@
                 Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\prebuilt\");
                 Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\recovery\");
                 Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\recovery\root\");
-                Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\recovery\root\etc\");
+
+                if (Directory.Exists(Data.PathToAIK + @"\ramdisk\system"))
+                {
+                    Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\recovery\root\system\");
+                    Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\recovery\root\system\etc\");
+                }
+                else
+                {
+                    Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\recovery\root\etc\");
+                }
 
                 if (!propValue[3].Contains("mt"))
                 {
@@ -256,7 +265,7 @@
 
                 ctx.Status("Copying Files");
 
-                MakeFile.CopyFiles(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\recovery\root\", propValue[3]);
+                MakeFile.CopyFiles(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\", propValue[3]);
 
                 ctx.Status("Creating Files");
             });
