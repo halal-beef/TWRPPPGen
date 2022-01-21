@@ -224,6 +224,9 @@
                 Directory.CreateDirectory(treeGenFolder + $@"\{propValue[0]}\");
                 Directory.CreateDirectory(treeGenFolder + $@"\{propValue[0]}\{propValue[1]}\");
                 Directory.CreateDirectory(treeGenFolder + $@"\{propValue[0]}\{propValue[1]}\{propValue[2]}\");
+                Directory.CreateDirectory(treeGenFolder + $@"\{propValue[0]}\{propValue[1]}\{propValue[2]}\prebuilt\");
+                Directory.CreateDirectory(treeGenFolder + $@"\{propValue[0]}\{propValue[1]}\{propValue[2]}\recovery\");
+                Directory.CreateDirectory(treeGenFolder + $@"\{propValue[0]}\{propValue[1]}\{propValue[2]}\recovery\root");
             });
             #endregion
         }
