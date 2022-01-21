@@ -13,8 +13,15 @@
             for (int i = 0; i < dotRCFiles.Length; i++)
             {
                 string[] part2 = dotRCFiles[i].Split('\\');
-                
-                File.Copy(dotRCFiles[i], targetFolder + part2.Last(), true);
+
+                //Copy the file if it maches.
+                if (part2.Last().Contains("init.recovery.qcom")
+                 || part2.Last().Contains("init.recovery.mt")
+                 || part2.Last().Contains("ueventd.qcom.rc")
+                 || part2.Last().Contains("ueventd.mt"))
+                {
+                    File.Copy(dotRCFiles[i], targetFolder + part2.Last(), true);
+                }
             }
 
             if (Directory.Exists(Data.PathToAIK + @"\ramdisk\system\etc"))
