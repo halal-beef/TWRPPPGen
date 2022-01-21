@@ -221,12 +221,12 @@
 
                 //Make folders to contain the tree!
                 Directory.CreateDirectory(treeGenFolder);
-                Directory.CreateDirectory(treeGenFolder + $@"\{propValue[0]}\");
-                Directory.CreateDirectory(treeGenFolder + $@"\{propValue[0]}\{propValue[1]}\");
-                Directory.CreateDirectory(treeGenFolder + $@"\{propValue[0]}\{propValue[1]}\{propValue[2]}\");
-                Directory.CreateDirectory(treeGenFolder + $@"\{propValue[0]}\{propValue[1]}\{propValue[2]}\prebuilt\");
-                Directory.CreateDirectory(treeGenFolder + $@"\{propValue[0]}\{propValue[1]}\{propValue[2]}\recovery\");
-                Directory.CreateDirectory(treeGenFolder + $@"\{propValue[0]}\{propValue[1]}\{propValue[2]}\recovery\root");
+                Directory.CreateDirectory(treeGenFolder + $@"\device\");
+                Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\");
+                Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\");
+                Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\prebuilt\");
+                Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\recovery\");
+                Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\recovery\root");
             });
             #endregion
         }
