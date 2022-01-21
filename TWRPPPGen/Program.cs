@@ -8,9 +8,11 @@
         /// <param name="args">Arguments given at startup.</param>
         public static void Main(string[] args)
         {
+            #region Argument Parsing
             StringBuilder imageLocation = new();
             bool recoveryImg = false,
                  bootImg = false;
+            
             //Parse args.
             for (int i = 0; i < args.Length; i++)
             {
@@ -34,7 +36,9 @@
                 AnsiConsole.MarkupLine("[maroon]\t- You didn't indicate a recovery image or boot image to work with![/]");
                 Environment.Exit(-1);
             }
+            #endregion
 
+            #region Set && Get Environment
             Data.CurrentOS = GetEnvironment.VerifyOS();
 
             if (Data.CurrentOS.Equals(OSPlatform.Windows) && !GetEnvironment.VerifyAIK())
@@ -73,7 +77,6 @@
                         ZipFile.ExtractToDirectory(zipTemp, Environment.CurrentDirectory);
                         ctx.Status("Deleting temporary files");
                         File.Delete(zipTemp);
-                        ctx.Status("Starting [lime]AIK[/]");
                     }
                     else
                     {
@@ -94,36 +97,51 @@
                     Environment.Exit(0);
                 }
             }
+            #endregion
 
+            #region Setup AIK and Run AIK
             try
             {
-                File.Copy(imageLocation.ToString(), Data.PathToAIK + @"\recovery.img", true);
+                if (recoveryImg) 
+                {
+                    File.Copy(imageLocation.ToString(), Data.PathToAIK + @"\recovery.img", true);
+                } 
+                else if (bootImg)
+                {
+                    File.Copy(imageLocation.ToString(), Data.PathToAIK + @"\boot.img", true);
+                }
             }
+
             catch
             {
                 AnsiConsole.MarkupLine("[maroon]\t- The supplied path to the image is invalid![/]");
             }
 
             //Unpack Image to AIK folder.
+
             if (GetEnvironment.VerifyAIK())
                 ProcessInvoker.InvokeCMD(Data.PathToAIK + @"\unpackimg.bat", "recovery.img", true, true);
+            #endregion
 
-            List<string> vals = new();
+            #region Parse Prop File.
+            List<string> props = new();
             bool foundProp = true;
+            
             AnsiConsole.Status()
                     .Spinner(Spinner.Known.Ascii)
                     .Start("Reading files",
                 ctx =>
                 {
                     ctx.Status($"Parsing props...");
+
                     //Get prop.default/default.prop and parse it
                     if (File.Exists(Data.PathToAIK + @"\ramdisk\prop.default"))
                     {
-                        vals = PropParser.ParseFile(Data.PathToAIK + @"\ramdisk\prop.default");
+                        props = PropParser.ParseFile(Data.PathToAIK + @"\ramdisk\prop.default");
                     }
                     else if (File.Exists(Data.PathToAIK + @"\ramdisk\default.prop"))
                     {
-                        vals = PropParser.ParseFile(Data.PathToAIK + @"\ramdisk\default.prop");
+                        props = PropParser.ParseFile(Data.PathToAIK + @"\ramdisk\default.prop");
                     }
                     else
                     {
@@ -138,6 +156,76 @@
                 Thread.Sleep(5 * 1000);
                 Environment.Exit(0);
             }
+            #endregion
+
+            #region Make Vendor Tree.
+
+            //||---------------||
+            //||  MODEL TREE:  ||
+            //||---------------||
+
+            /*	{device}
+             *	 |_  {brand}
+             *	   |_ {codename}
+             *	       |  omni_{codename}.mk
+             *	       |  BoardConfig.mk
+             *	       |  AndroidProducts.mk
+             *	       |  Android.mk
+             *	       |_____ prebuilt
+             *	       |    zImage
+             *	       |_____ recovery
+             *	             |___ root
+             *	            init.platform.recovery.rc
+             *	            ueventd.rc
+             */
+            List<string> neededProps = new() 
+            {
+                "ro.product.odm.model",
+                "ro.product.odm.brand",
+                "ro.product.odm.device"
+            };
+            List<string> propValue = new();
+            //Set the propValue capacity to be the needed props one.
+            propValue.Capacity = neededProps.Count;
+            propValue.AddRange(neededProps);
+
+            //Search for lines. and sets them accordingly.
+            // Example:
+            // ro.product.odm.model is in neededProps[0]s. It's value will be on propValue[0]
+
+            AnsiConsole.Status().Spinner(Spinner.Known.Ascii).Start(
+                "Reading Lines", ctx =>
+            {
+                for (int i = 0; i < neededProps.Count; i++)
+                {
+                    try
+                    {
+                        Thread thread = new(() => propValue[i] = PropParser.LineSearcher(neededProps[i], props));
+                        thread.Name = $"Line searcher {i}";
+                        thread.IsBackground = true;
+                        thread.Start();
+                    } 
+                    catch
+                    {
+                        Console.WriteLine($"AN ERROR OCCURED ON ITERATION {i}!");
+                    }
+                    Thread.Sleep(250);
+                }
+
+                lock (PropParser.LineSearcherlocker)
+                {
+                    Thread.Sleep(500);
+                }
+
+                string treeGenFolder = Environment.CurrentDirectory + @"\Generated-Tree\";
+
+                //Make folders to contain the tree!
+                Directory.CreateDirectory(treeGenFolder);
+                Directory.CreateDirectory(treeGenFolder + $@"\{propValue[0]}\");
+                Directory.CreateDirectory(treeGenFolder + $@"\{propValue[0]}\{propValue[1]}\");
+                Directory.CreateDirectory(treeGenFolder + $@"\{propValue[0]}\{propValue[1]}\{propValue[2]}\");
+            });
+            #endregion
         }
     }
 }
