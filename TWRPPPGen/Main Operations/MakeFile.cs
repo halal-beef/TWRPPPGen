@@ -73,7 +73,7 @@
                 {
                 ProcessStartInfo deitz = new();
                 deitz.FileName = "sudo";
-                deitz.Arguments = $" chmod ugo+rwx {dotRCFiles[i]}";
+                deitz.Arguments = $" chmod ugo+rwx \"{dotRCFiles[i]}\"";
                 Process.Start(deitz);
                     File.Copy(dotRCFiles[i], targetFolder + @"/recovery/root/" + part2.Last(), true);
                 }
