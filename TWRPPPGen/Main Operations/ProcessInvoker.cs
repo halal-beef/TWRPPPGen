@@ -56,8 +56,11 @@
 
             //Wait some time...
             Thread.Sleep(2 * 1000);
+
             if (isAIK)
+            {
                 x.Start();
+            }
 
             proc.WaitForExit();
 
