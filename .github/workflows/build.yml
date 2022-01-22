@@ -36,7 +36,6 @@ jobs:
       with:
        name: debug-linux
        path: |
-        /home/runner/work/TWRPPPGen/TWRPPPGen/build-debug/TWRPPPGen.exe
         /home/runner/work/TWRPPPGen/TWRPPPGen/build-linux-debug/TWRPPPGen
         
     - uses: actions/upload-artifact@v2
