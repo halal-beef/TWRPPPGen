@@ -39,64 +39,7 @@
             #endregion
 
             #region Set && Get Environment
-            Data.CurrentOS = GetEnvironment.VerifyOS();
-
-            if (Data.CurrentOS.Equals(OSPlatform.Windows) && !GetEnvironment.VerifyAIK())
-            {
-                bool internet = true;
-                AnsiConsole.Status()
-                    .Spinner(Spinner.Known.Ascii)
-                    .Start("Downloading [red]AIK[/]",
-                ctx =>
-                {
-                    bool ded = false;
-                    HttpResponseMessage hrm = new();
-                    try
-                    {
-                        hrm = Data.client.GetAsync("https://forum.xda-developers.com/attachments/android-image-kitchen-v3-8-win32-zip.5300919/").GetAwaiter().GetResult();
-                    }
-                    catch
-                    {
-                        ded = true;
-                    }
-
-                    if (!ded && hrm.IsSuccessStatusCode)
-                    {
-                        string zipTemp = Path.GetTempFileName();
-                        Stream aikZip = hrm.Content.ReadAsStream();
-
-                        using (FileStream fs = File.Create(zipTemp))
-                        {
-                            //Easy way Maeks AikZip Stream Content -> File
-                            aikZip.CopyTo(fs);
-                            fs.Flush();
-                            fs.Dispose();
-                            fs.Close();
-                        }
-                        ctx.Status("Unpacking [red]AIK[/]");
-                        ZipFile.ExtractToDirectory(zipTemp, Environment.CurrentDirectory);
-                        ctx.Status("Deleting temporary files");
-                        File.Delete(zipTemp);
-                    }
-                    else
-                    {
-                        internet = false;
-                    }
-
-                });
-
-                if (!internet)
-                {
-                    AnsiConsole.MarkupLine(
-                            "[maroon]" +
-                            "\t- There isn't an internet connection available!\n" +
-                           $"\t- If you have an AIK zip with all it's dependencies and it's scripts, unzip it into \"{Data.PathToAIK}\"" +
-                            "[/]");
-
-                    Thread.Sleep(5 * 1000);
-                    Environment.Exit(0);
-                }
-            }
+            PrepareEnvironment.GetAIK();
             #endregion
 
             #region Get Templates(WIP).
@@ -114,63 +57,13 @@
             #endregion
 
             #region Setup AIK and Run AIK
-            try
-            {
-                if (GetEnvironment.VerifyAIK())
-                {
-                    if (recoveryImg)
-                    {
-                        File.Copy(imageLocation.ToString(), Data.PathToAIK + @"\recovery.img", true);
-                        ProcessInvoker.InvokeCMD(Data.PathToAIK + @"\unpackimg.bat", "recovery.img", true, true);
-                    }
-                    else if (bootImg)
-                    {
-                        File.Copy(imageLocation.ToString(), Data.PathToAIK + @"\boot.img", true);
-                        ProcessInvoker.InvokeCMD(Data.PathToAIK + @"\unpackimg.bat", "boot.img", true, true);
-                    }
-                }
-            }
-
-            catch
-            {
-                AnsiConsole.MarkupLine("[maroon]\t- The supplied path to the image is invalid![/]");
-            }
-
+            PrepareEnvironment.CopyImage(imageLocation, recoveryImg, bootImg);
             #endregion
 
             #region Parse Prop File.
-            List<string> props = new();
-            bool foundProp = true;
-            
-            AnsiConsole.Status()
-                    .Spinner(Spinner.Known.Ascii)
-                    .Start("Reading files",
-                ctx =>
-                {
-                    ctx.Status($"Parsing props...");
 
-                    //Get prop.default/default.prop and parse it
-                    if (File.Exists(Data.PathToAIK + @"\ramdisk\prop.default"))
-                    {
-                        props = PropParser.ParseFile(Data.PathToAIK + @"\ramdisk\prop.default");
-                    }
-                    else if (File.Exists(Data.PathToAIK + @"\ramdisk\default.prop"))
-                    {
-                        props = PropParser.ParseFile(Data.PathToAIK + @"\ramdisk\default.prop");
-                    }
-                    else
-                    {
-                        foundProp = false;
-                    }
-                });
-            if (!foundProp)
-            {
-                AnsiConsole.MarkupLine(
-                    "[maroon]\t- Was the image supplied a A Only device boot image?" +
-                    "\t- If so, try fetching the recovery.img for your device");
-                Thread.Sleep(5 * 1000);
-                Environment.Exit(0);
-            }
+            List<string> props = PrepareEnvironment.GetPropList();
+
             #endregion
 
             #region Make Vendor Tree.
@@ -201,10 +94,8 @@
                 "ro.board.platform",
                 "ro.bionic.arch"
             };
-            List<string> propValue = new();
-            //Set the propValue capacity to be the needed props one.
-            propValue.Capacity = neededProps.Count;
-            propValue.AddRange(neededProps);
+            List<string> propValues = new();
+            propValues.AddRange(neededProps);
 
             //Search for lines. and sets them accordingly.
             // Example:
@@ -217,11 +108,11 @@
                 {
                     try
                     {
-                        Thread thread = new(() => propValue[i] = PropParser.LineSearcher(neededProps[i], props));
+                        Thread thread = new(() => propValues[i] = PropParser.LineSearcher(neededProps[i], props));
                         thread.Name = $"Line searcher {i}";
                         thread.IsBackground = true;
                         thread.Start();
-                    } 
+                    }
                     catch
                     {
                         Console.WriteLine($"AN ERROR OCCURED ON ITERATION {i}!");
@@ -234,25 +125,32 @@
                     Thread.Sleep(500);
                 }
                 ctx.Status("Creating Folders");
-                string treeGenFolder = Environment.CurrentDirectory + @"\Generated-Tree\";
+
+                string generatedTreeFolder = $"{Environment.CurrentDirectory}\\Generated-Tree\\";
+                string treeFolder = generatedTreeFolder + $"\\device\\{propValues[1]}\\{propValues[2]}\\";
+                
+                //List of folders that should be created
+                List<string> neededFolders = new()
+                {
+                    generatedTreeFolder,
+                    treeFolder,
+                    $"{treeFolder}\\prebuilt\\",
+                    $"{treeFolder}\\recovery\\root\\"
+                };
 
                 //Make folders to contain the tree!
-                Directory.CreateDirectory(treeGenFolder);
-                Directory.CreateDirectory(treeGenFolder + $@"\device\");
-                Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\");
-                Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\");
-                Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\prebuilt\");
-                Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\recovery\");
-                Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\recovery\root\");
+                PrepareEnvironment.CreateFolders(neededFolders);
 
                 if (Directory.Exists(Data.PathToAIK + @"\ramdisk\system"))
                 {
-                    Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\recovery\root\system\");
-                    Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\recovery\root\system\etc\");
+                    //Image is NOT SAR
+                    Directory.CreateDirectory($"{treeFolder}\\recovery\\root\\system\\");
+                    Directory.CreateDirectory($"{treeFolder}\\recovery\\root\\system\\etc\\");
                 }
                 else
                 {
-                    Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\recovery\root\etc\");
+                    //Image is SAR
+                    Directory.CreateDirectory($"{treeFolder}\\recovery\\root\\etc\\");
                 }
 
                 //Get SoC ABIs.
@@ -261,32 +159,32 @@
                 string[] arch = SoCABIList.Split('-');
 
                 //If it failed to get arch normally with the prop ro.bionic.arch it will use the first value from the abi list
-                if (propValue[4] == "Prop Not Found.")
+                if (propValues[4] == "Prop Not Found.")
                 {
-                    propValue[4] = arch[0];
+                    propValues[4] = arch[0];
                 }
 
                 //Check if MTK or QCOM
-                if (!propValue[3].Contains("mt"))
+                if (!propValues[3].Contains("mt"))
                 {
                     if(PropParser.LineSearcher("ro.hardware.wlan.vendor", props) == "qcom")
                     {
-                        propValue[3] = "qcom";
+                        propValues[3] = "qcom";
                     }
                 }
 
 
                 ctx.Status("Copying Files");
 
-                MakeFile.CopyFiles(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\", propValue[3]);
+                MakeFile.CopyFiles(treeFolder, propValues[3]);
 
                 ctx.Status("Creating Files");
 
-                if (propValue[4].Equals("arm64")) 
+                if (propValues[4].Equals("arm64")) 
                 {
                     TemplateParser.SetupTemplate(SoCABIList, props, true);
                 } 
-                else if (propValue[4].Equals("arm"))
+                else if (propValues[4].Equals("arm"))
                 {
                     TemplateParser.SetupTemplate(SoCABIList, props, false);
                 }

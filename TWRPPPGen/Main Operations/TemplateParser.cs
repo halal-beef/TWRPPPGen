@@ -25,8 +25,7 @@
             else
             {
                 template = File.ReadAllText(Environment.CurrentDirectory + @"\Templates\ARM.template");
-            }
-            
+            } 
 
             template = template.Replace("[ABI]", $"{PropParser.LineSearcher("ro.product.cpu.abi", props)}");
 
