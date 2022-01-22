@@ -62,7 +62,7 @@
                 //disable permissions
                 ProcessStartInfo deitz = new();
                 deitz.FileName = "sudo";
-                deitz.Arguments = $" chmod ugo+rwx"}";
+                deitz.Arguments = $" chmod ugo+rwx";
                 Process.Start(deitz);
             string[] dotRCFiles = Directory.GetFiles(Environment.CurrentDirectory + @"/Android Image Kitchen" + @"/ramdisk/", "*.rc");
 
