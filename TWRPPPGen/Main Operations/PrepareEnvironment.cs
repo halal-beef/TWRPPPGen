@@ -141,8 +141,8 @@
         /// <param name="bootImg">Is it a boot image?</param>
         public static void CopyImage(StringBuilder imageLocation, bool recoveryImg, bool bootImg)
         {
-            try
-            {
+            //try
+            //{
                 //if (GetEnvironment.VerifyAIK())
                 //{
                 if(Data.CurrentOS.Equals(OSPlatform.Linux))
@@ -172,11 +172,11 @@
                     }
                 }
                 //}
-            }
-            catch
-            {
-                AnsiConsole.MarkupLine("[maroon]\t- The supplied path to the image is invalid![/]");
-            }
+            //}
+            //catch
+            //{
+             //   AnsiConsole.MarkupLine("[maroon]\t- The supplied path to the image is invalid![/]");
+            //}
         }
         /// <summary>
         /// This class shows progress, and gets the list that contains all props extracted from prop.default
