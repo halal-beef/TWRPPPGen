@@ -7,5 +7,10 @@ dotnet publish "/home/runner/work/TWRPPPGen/TWRPPPGen/TWRPPPGen/TWRPPPGen.csproj
 
 dotnet publish "/home/runner/work/TWRPPPGen/TWRPPPGen/TWRPPPGen/TWRPPPGen.csproj" --output "build-debug\\" -r win-x64 -c debug # win build
 
+dotnet publish "/home/runner/work/TWRPPPGen/TWRPPPGen/TWRPPPGen/TWRPPPGen.csproj" --output "build\\" -r linux-x64 -c release # linux build
+
+dotnet publish "/home/runner/work/TWRPPPGen/TWRPPPGen/TWRPPPGen/TWRPPPGen.csproj" --output "build-debug\\" -r linux-x64 -c debug # linux build
+
 # Move debug build
 mv "/home/runner/work/TWRPPPGen/TWRPPPGen/build-debug/TWRPPPGen.exe" "/home/runner/work/TWRPPPGen/TWRPPPGen/build/DEBUG-TWRPPPGen.exe"
+mv "/home/runner/work/TWRPPPGen/TWRPPPGen/build-debug/TWRPPPGen" "/home/runner/work/TWRPPPGen/TWRPPPGen/build/DEBUG-TWRPPPGen"
