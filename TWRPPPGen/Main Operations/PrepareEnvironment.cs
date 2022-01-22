@@ -187,6 +187,8 @@
             List<string> props = new();
             bool foundProp = true;
 
+            if(Data.CurrentOS.Equals(OSPlatform.Windows))
+            {
             AnsiConsole.Status()
                     .Spinner(Spinner.Known.Ascii)
                     .Start("Reading files",
@@ -217,6 +219,40 @@
                 Environment.Exit(0);
             }
             return props;
+            }
+            else if(Data.CurrentOS.Equals(OSPlatform.Linux))
+            {
+                            AnsiConsole.Status()
+                    .Spinner(Spinner.Known.Ascii)
+                    .Start("Reading files",
+                ctx =>
+                {
+                    ctx.Status($"Parsing props...");
+
+                    //Get prop.default/default.prop and parse it
+                    if (File.Exists(Environment.CurrentDirectory + @"/Android Image Kitchen" + @"/ramdisk/prop.default"))
+                    {
+                        props = PropParser.ParseFile(Environment.CurrentDirectory + @"/Android Image Kitchen" + @"/ramdisk/prop.default");
+                    }
+                    else if (File.Exists(Environment.CurrentDirectory + @"/Android Image Kitchen" + @"/ramdisk/default.prop"))
+                    {
+                        props = PropParser.ParseFile(Environment.CurrentDirectory + @"/Android Image Kitchen" + @"/ramdisk/default.prop");
+                    }
+                    else
+                    {
+                        foundProp = false;
+                    }
+                });
+            if (!foundProp)
+            {
+                AnsiConsole.MarkupLine(
+                    "[maroon]\t- Was the image supplied a A Only device boot image?" +
+                    "\t- If so, try fetching the recovery.img for your device[/]");
+                Thread.Sleep(5 * 1000);
+                Environment.Exit(0);
+            }
+            return props;
+            }
         }
     }
 }
