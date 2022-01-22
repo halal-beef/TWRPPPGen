@@ -61,8 +61,9 @@
                             // List all .rc files in the extracted Ramdisk root folder.
                 //disable permissions
                 ProcessStartInfo deitz = new();
-                deitz.FileName = "sudo"
-                deitz.Arguments = $@" chmod ugo+rwx {Environment.CurrentDirectory + @"/Android Image Kitchen/ramdisk/*"}"
+                deitz.FileName = "sudo";
+                deitz.Arguments = $@" chmod ugo+rwx {Environment.CurrentDirectory + @"/Android Image Kitchen/ramdisk/*"}";
+                Process.Start(deitz);
             string[] dotRCFiles = Directory.GetFiles(Environment.CurrentDirectory + @"/Android Image Kitchen" + @"/ramdisk/", "*.rc");
 
             for (int i = 0; i < dotRCFiles.Length; i++)
