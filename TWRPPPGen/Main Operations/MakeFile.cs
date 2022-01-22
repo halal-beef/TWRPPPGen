@@ -55,11 +55,11 @@
             //Copy kernel -> zImage
             if (File.Exists(Data.PathToAIK + @"\split_img\boot.img-kernel"))
             {
-                File.Copy(Data.PathToAIK + @"\split_img\boot.img-kernel", targetFolder + @"\prebuilt\zImage");
+                File.Copy(Data.PathToAIK + @"\split_img\boot.img-kernel", targetFolder + @"\prebuilt\zImage", true);
             }
             else if (File.Exists(Data.PathToAIK + @"\split_img\recovery.img-kernel"))
             {
-                File.Copy(Data.PathToAIK + @"\split_img\recovery.img-kernel", targetFolder + @"\prebuilt\zImage");
+                File.Copy(Data.PathToAIK + @"\split_img\recovery.img-kernel", targetFolder + @"\prebuilt\zImage", true);
             }
         }
     }

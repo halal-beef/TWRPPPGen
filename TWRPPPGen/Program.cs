@@ -198,7 +198,8 @@
                 "ro.product.vendor.model",
                 "ro.product.vendor.brand",
                 "ro.product.vendor.device",
-                "ro.board.platform"
+                "ro.board.platform",
+                "ro.bionic.arch"
             };
             List<string> propValue = new();
             //Set the propValue capacity to be the needed props one.
@@ -254,6 +255,18 @@
                     Directory.CreateDirectory(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\recovery\root\etc\");
                 }
 
+                //Get SoC ABIs.
+                string SoCABIList = PropParser.LineSearcher("ro.product.cpu.abilist", props);
+
+                string[] arch = SoCABIList.Split('-');
+
+                //If it failed to get arch normally with the prop ro.bionic.arch it will use the first value from the abi list
+                if (propValue[4] == "Prop Not Found.")
+                {
+                    propValue[4] = arch[0];
+                }
+
+                //Check if MTK or QCOM
                 if (!propValue[3].Contains("mt"))
                 {
                     if(PropParser.LineSearcher("ro.hardware.wlan.vendor", props) == "qcom")
@@ -268,6 +281,15 @@
                 MakeFile.CopyFiles(treeGenFolder + $@"\device\{propValue[1]}\{propValue[2]}\", propValue[3]);
 
                 ctx.Status("Creating Files");
+
+                if (propValue[4].Equals("arm64")) 
+                {
+                    TemplateParser.SetupTemplate(SoCABIList, props, true);
+                } 
+                else if (propValue[4].Equals("arm"))
+                {
+                    TemplateParser.SetupTemplate(SoCABIList, props, false);
+                }
             });
             #endregion
         }
