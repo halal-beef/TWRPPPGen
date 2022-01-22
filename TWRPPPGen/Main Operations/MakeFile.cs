@@ -75,8 +75,8 @@
                 deitz.FileName = "sudo";
                 deitz.Arguments = $" chmod ugo+rwx \"{dotRCFiles[i]}\"";
                 Process.Start(deitz);
-                deitz.FileName = "takeown";
-                deitz.Arguments = $" \"{dotRCFiles[i]}\"";
+                deitz.FileName = "chown";
+                deitz.Arguments = $"{Environment.UserName} \"{dotRCFiles[i]}\"";
                 Process.Start(deitz);
                 File.Copy(dotRCFiles[i], targetFolder + @"/recovery/root/" + part2.Last(), true);
                 }
