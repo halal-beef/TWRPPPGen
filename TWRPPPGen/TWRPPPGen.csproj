@@ -5,6 +5,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>TWRPPPGen</RootNamespace>
     <Nullable>enable</Nullable>
+    <PublishSingleFile>true</PublishSingleFile>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
   </PropertyGroup>
 
   <ItemGroup>
