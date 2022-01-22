@@ -218,8 +218,6 @@
                 Thread.Sleep(5 * 1000);
                 Environment.Exit(0);
             }
-            return props;
-            }
             else if(Data.CurrentOS.Equals(OSPlatform.Linux))
             {
                             AnsiConsole.Status()
@@ -253,6 +251,7 @@
             }
             return props;
             }
+            return props;
         }
     }
 }
