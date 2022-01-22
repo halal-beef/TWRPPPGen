@@ -88,7 +88,7 @@
                     HttpResponseMessage hrm = new();
                     try
                     {
-                        hrm = Data.client.GetAsync("https://forum.xda-developers.com/attachments/aik-linux-v3-8-all-tar-gz.5300923/").GetAwaiter().GetResult();
+                        hrm = Data.client.GetAsync("https://github.com/TWRPPGen/AIK-Linux/raw/main/AIK.zip").GetAwaiter().GetResult();
                     }
                     catch
                     {
