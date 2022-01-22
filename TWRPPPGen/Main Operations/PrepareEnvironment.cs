@@ -256,6 +256,7 @@
             }
             return props;
             }
+            return props;
         }
     }
 }
