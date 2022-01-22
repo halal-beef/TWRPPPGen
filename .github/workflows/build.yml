@@ -35,12 +35,10 @@ jobs:
       name: Upload Linux Debug Builds
       with:
        name: debug-linux
-       path: |
-        /home/runner/work/TWRPPPGen/TWRPPPGen/build-linux-debug/TWRPPPGen
+       path: /home/runner/work/TWRPPPGen/TWRPPPGen/build-linux-debug/TWRPPPGen
         
     - uses: actions/upload-artifact@v2
       name: Upload Win Debug Builds
       with:
        name: debug-win
-       path: |
-        /home/runner/work/TWRPPPGen/TWRPPPGen/build-debug/TWRPPPGen.exe
+       path: /home/runner/work/TWRPPPGen/TWRPPPGen/build-debug/TWRPPPGen.exe
