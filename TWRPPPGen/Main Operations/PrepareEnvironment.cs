@@ -149,13 +149,13 @@
                 {
                     if (recoveryImg)
                     {
-                        File.Copy(imageLocation.ToString(), Environment.CurrentDirectory + @"\Android Image Kitchen" + @"\recovery.img", true);
-                        ProcessInvoker.InvokeCMD(Environment.CurrentDirectory + @"\Android Image Kitchen" + @"\unpackimg.sh", "recovery.img", true, true);
+                        File.Copy(imageLocation.ToString(), Environment.CurrentDirectory + @"/Android Image Kitchen" + @"/recovery.img", true);
+                        ProcessInvoker.InvokeCMD(Environment.CurrentDirectory + @"/Android Image Kitchen" + @"/unpackimg.sh", "recovery.img", true, true);
                     }
                     else if (bootImg)
                     {
-                        File.Copy(imageLocation.ToString(), Environment.CurrentDirectory + @"\Android Image Kitchen" + @"\boot.img", true);
-                        ProcessInvoker.InvokeCMD(Environment.CurrentDirectory + @"\Android Image Kitchen" + @"\unpackimg.sh", "boot.img", true, true);
+                        File.Copy(imageLocation.ToString(), Environment.CurrentDirectory + @"/Android Image Kitchen" + @"/boot.img", true);
+                        ProcessInvoker.InvokeCMD(Environment.CurrentDirectory + @"/Android Image Kitchen" + @"/unpackimg.sh", "boot.img", true, true);
                     }
                 }
                 else if(Data.CurrentOS.Equals(OSPlatform.Windows))
