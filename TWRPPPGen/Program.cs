@@ -126,31 +126,31 @@
                 }
                 ctx.Status("Creating Folders");
 
-                string generatedTreeFolder = $"{Environment.CurrentDirectory}\\Generated-Tree\\";
-                string treeFolder = generatedTreeFolder + $"\\device\\{propValues[1]}\\{propValues[2]}\\";
+                string generatedTreeFolder = $"{Environment.CurrentDirectory}/Generated-Tree";
+                string treeFolder = generatedTreeFolder + $"/device/{propValues[1]}/{propValues[2]}/";
                 
                 //List of folders that should be created
                 List<string> neededFolders = new()
                 {
                     generatedTreeFolder,
                     treeFolder,
-                    $"{treeFolder}\\prebuilt\\",
-                    $"{treeFolder}\\recovery\\root\\"
+                    $"{treeFolder}prebuilt/",
+                    $"{treeFolder}recovery/root/"
                 };
 
                 //Make folders to contain the tree!
                 PrepareEnvironment.CreateFolders(neededFolders);
 
-                if (Directory.Exists(Data.PathToAIK + @"\ramdisk\system"))
+                if (Directory.Exists(Environment.CurrentDirectory + "/Android Image Kitchen" + @"/ramdisk/system"))
                 {
                     //Image is NOT SAR
-                    Directory.CreateDirectory($"{treeFolder}\\recovery\\root\\system\\");
-                    Directory.CreateDirectory($"{treeFolder}\\recovery\\root\\system\\etc\\");
+                    Directory.CreateDirectory($"{treeFolder}recovery/root/system/");
+                    Directory.CreateDirectory($"{treeFolder}recovery/root/system/etc/");
                 }
                 else
                 {
                     //Image is SAR
-                    Directory.CreateDirectory($"{treeFolder}\\recovery\\root\\etc\\");
+                    Directory.CreateDirectory($"{treeFolder}recovery/root/etc/");
                 }
 
                 //Get SoC ABIs.
