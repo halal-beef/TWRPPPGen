@@ -1,0 +1,40 @@
+name: TWRPPPGen Build CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET 6
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Compile TWRPPPGen
+      id: date
+      run:  |
+        chmod +x build.sh && \
+        ./build.sh && \
+        echo "::set-output name=today::$(date +"%d-%m-%y--%H-%M-%S")"
+
+    - uses: actions/upload-artifact@v2
+      name: Upload Release Builds
+      with:
+       name: release
+       path: |
+        /home/runner/work/TWRPPPGen/TWRPPPGen/build/TWRPPPGen.exe
+        /home/runner/work/TWRPPPGen/TWRPPPGen/build-linux/TWRPPPGen
+    
+    - uses: actions/upload-artifact@v2
+      name: Upload Debug Builds
+      with:
+       name: debug
+       path: |
+        /home/runner/work/TWRPPPGen/TWRPPPGen/build-debug/TWRPPPGen.exe
+        /home/runner/work/TWRPPPGen/TWRPPPGen/build-linux-debug/TWRPPPGen
