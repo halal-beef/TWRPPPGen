@@ -63,7 +63,7 @@
 
             for (int i = 0; i < dotRCFiles.Length; i++)
             {
-                string[] part2 = dotRCFiles[i].Split('//');
+                string[] part2 = dotRCFiles[i].Split(@"//");
 
                 // Copy the file if it maches.
                 if (part2.Last().Contains($"init.recovery.{hware}")
