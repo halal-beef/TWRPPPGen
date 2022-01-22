@@ -184,11 +184,11 @@
         /// <returns></returns>
         public static List<string> GetPropList()
         {
+            if(Data.CurrentOS.Equals(OSPlatform.Windows))
+            {
             List<string> props = new();
             bool foundProp = true;
 
-            if(Data.CurrentOS.Equals(OSPlatform.Windows))
-            {
             AnsiConsole.Status()
                     .Spinner(Spinner.Known.Ascii)
                     .Start("Reading files",
@@ -214,13 +214,18 @@
             {
                 AnsiConsole.MarkupLine(
                     "[maroon]\t- Was the image supplied a A Only device boot image?" +
-                    "\t- If so, try fetching the recovery.img for your device[/]");
+                    "\t- If so, try fetching the recovery.img for your device");
                 Thread.Sleep(5 * 1000);
                 Environment.Exit(0);
             }
+            return props;
+            }
             else if(Data.CurrentOS.Equals(OSPlatform.Linux))
             {
-                            AnsiConsole.Status()
+                List<string> props = new();
+            bool foundProp = true;
+
+            AnsiConsole.Status()
                     .Spinner(Spinner.Known.Ascii)
                     .Start("Reading files",
                 ctx =>
@@ -245,13 +250,12 @@
             {
                 AnsiConsole.MarkupLine(
                     "[maroon]\t- Was the image supplied a A Only device boot image?" +
-                    "\t- If so, try fetching the recovery.img for your device[/]");
+                    "\t- If so, try fetching the recovery.img for your device");
                 Thread.Sleep(5 * 1000);
                 Environment.Exit(0);
             }
             return props;
             }
-            return props;
         }
     }
 }
