@@ -76,6 +76,62 @@
                     Environment.Exit(0);
                 }
             }
+            else if(Data.CurrentOS.Equals(OSPlatform.Linux)) //idc about signing i am just testing
+            {
+                            bool internet = true;
+                AnsiConsole.Status()
+                    .Spinner(Spinner.Known.Ascii)
+                    .Start("Downloading [red]AIK[/]",
+                ctx =>
+                {
+                    bool ded = false;
+                    HttpResponseMessage hrm = new();
+                    try
+                    {
+                        hrm = Data.client.GetAsync("https://forum.xda-developers.com/attachments/aik-linux-v3-8-all-tar-gz.5300923/").GetAwaiter().GetResult();
+                    }
+                    catch
+                    {
+                        ded = true;
+                    }
+
+                    if (!ded && hrm.IsSuccessStatusCode)
+                    {
+                        string zipTemp = Path.GetTempFileName();
+                        Stream aikZip = hrm.Content.ReadAsStream();
+
+                        using (FileStream fs = File.Create(zipTemp))
+                        {
+                            //Easy way Maeks AikZip Stream Content -> File
+                            aikZip.CopyTo(fs);
+                            fs.Flush();
+                            fs.Dispose();
+                            fs.Close();
+                        }
+                        ctx.Status("Unpacking [red]AIK[/]");
+                        ZipFile.ExtractToDirectory(zipTemp, Environment.CurrentDirectory);
+                        ctx.Status("Deleting temporary files");
+                        File.Delete(zipTemp);
+                    }
+                    else
+                    {
+                        internet = false;
+                    }
+
+                });
+
+                if (!internet)
+                {
+                    AnsiConsole.MarkupLine(
+                            "[maroon]" +
+                            "\t- There isn't an internet connection available!\n" +
+                           $"\t- If you have an AIK zip with all it's dependencies and it's scripts, unzip it into \"{Data.PathToAIK}\"" +
+                            "[/]");
+
+                    Thread.Sleep(5 * 1000);
+                    Environment.Exit(0);
+                }   
+            }
         }
         /// <summary>
         /// Copy the recovery image or boot image
@@ -87,7 +143,22 @@
         {
             try
             {
-                if (GetEnvironment.VerifyAIK())
+                //if (GetEnvironment.VerifyAIK())
+                //{
+                if(Data.CurrentOS.Equals(OSPlatform.Linux))
+                {
+                    if (recoveryImg)
+                    {
+                        File.Copy(imageLocation.ToString(), Data.PathToAIK + @"\recovery.img", true);
+                        ProcessInvoker.InvokeCMD(Data.PathToAIK + @"\unpackimg.sh", "recovery.img", true, true);
+                    }
+                    else if (bootImg)
+                    {
+                        File.Copy(imageLocation.ToString(), Data.PathToAIK + @"\boot.img", true);
+                        ProcessInvoker.InvokeCMD(Data.PathToAIK + @"\unpackimg.sh", "boot.img", true, true);
+                    }
+                }
+                else if(Data.CurrentOS.Equals(OSPlatform.Windows))
                 {
                     if (recoveryImg)
                     {
@@ -100,6 +171,7 @@
                         ProcessInvoker.InvokeCMD(Data.PathToAIK + @"\unpackimg.bat", "boot.img", true, true);
                     }
                 }
+                //}
             }
             catch
             {
