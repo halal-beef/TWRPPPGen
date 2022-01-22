@@ -27,4 +27,6 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
        name: Output
-       path: /home/runner/work/TWRPPPGen/TWRPPPGen/build/DEBUG-TWRPPPGen.exe
+       path: |
+             /home/runner/work/TWRPPPGen/TWRPPPGen/build/DEBUG-TWRPPPGen.exe
+             /home/runner/work/TWRPPPGen/TWRPPPGen/build/DEBUG-TWRPPPGen
