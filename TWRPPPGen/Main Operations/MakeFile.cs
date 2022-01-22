@@ -7,14 +7,14 @@
         /// </summary>
         public static void CopyFiles(string targetFolder, string hware)
         {
-            //List all .rc files in the extracted Ramdisk root folder.
+            // List all .rc files in the extracted Ramdisk root folder.
             string[] dotRCFiles = Directory.GetFiles(Data.PathToAIK + @"\ramdisk\", "*.rc");
 
             for (int i = 0; i < dotRCFiles.Length; i++)
             {
                 string[] part2 = dotRCFiles[i].Split('\\');
 
-                //Copy the file if it maches.
+                // Copy the file if it maches.
                 if (part2.Last().Contains($"init.recovery.{hware}")
                  || part2.Last().Contains($"init.recovery.{hware}")
                  || part2.Last().Contains($"ueventd.{hware}")
@@ -24,35 +24,27 @@
                 }
             }
 
-            //NO SAR
+            // NO SAR
             if (Directory.Exists(Data.PathToAIK + @"\ramdisk\system\"))
             {
                 if (Directory.Exists(Data.PathToAIK + @"\ramdisk\system\etc"))
                 {
-                    if (File.Exists(Data.PathToAIK + @"\ramdisk\system\etc\ueventd.rc"))
-                    {
-                        File.Copy(Data.PathToAIK + @"\ramdisk\system\etc\ueventd.rc", targetFolder + @"\recovery\root\ueventd.rc", true);
-                    }
                     if (File.Exists(Data.PathToAIK + @"\ramdisk\system\etc\recovery.fstab"))
                     {
                         File.Copy(Data.PathToAIK + @"\ramdisk\system\etc\recovery.fstab", targetFolder + @"\recovery\root\system\etc\recovery.fstab", true);
                     }
                 }
             } 
-            //SAR
+            // SAR
             else if (Directory.Exists(Data.PathToAIK + @"\ramdisk\etc\"))
             {
-                if (File.Exists(Data.PathToAIK + @"\ramdisk\ueventd.rc"))
-                {
-                    File.Copy(Data.PathToAIK + @"\ramdisk\ueventd.rc", targetFolder + @"\recovery\root\ueventd.rc", true);
-                }
                 if (File.Exists(Data.PathToAIK + @"\ramdisk\etc\recovery.fstab"))
                 {
                     File.Copy(Data.PathToAIK + @"\ramdisk\etc\recovery.fstab", targetFolder + @"\recovery\root\etc\recovery.fstab", true);
                 }
             }
 
-            //Copy kernel -> zImage
+            // Copy kernel -> zImage
             if (File.Exists(Data.PathToAIK + @"\split_img\boot.img-kernel"))
             {
                 File.Copy(Data.PathToAIK + @"\split_img\boot.img-kernel", targetFolder + @"\prebuilt\zImage", true);
