@@ -256,7 +256,7 @@
             }
             return props;
             }
-            return props;
+            return null;
         }
     }
 }
