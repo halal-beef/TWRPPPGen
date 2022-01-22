@@ -212,7 +212,7 @@
             {
                 AnsiConsole.MarkupLine(
                     "[maroon]\t- Was the image supplied a A Only device boot image?" +
-                    "\t- If so, try fetching the recovery.img for your device");
+                    "\t- If so, try fetching the recovery.img for your device[/]");
                 Thread.Sleep(5 * 1000);
                 Environment.Exit(0);
             }
